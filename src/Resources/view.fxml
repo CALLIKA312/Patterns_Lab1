@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: lightgray;"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="Patterns.MVC.Controller">
+    <children>
+        <BorderPane prefHeight="600.0" prefWidth="900.0">
+            <right>
+                <TableView fx:id="tableView" prefHeight="600.0" prefWidth="300.0" BorderPane.alignment="CENTER">
+                    <columns>
+                        <TableColumn prefWidth="150.0" resizable="false" text="X" fx:id="xTableColumn"/>
+                        <TableColumn fx:id="yTableColumn" prefWidth="150.0" resizable="false" text="Y"/>
+                    </columns>
+                </TableView>
+            </right>
+            <center>
+                <LineChart fx:id="lineChart" style="-fx-background-color: white;" BorderPane.alignment="CENTER">
+                    <xAxis>
+                        <NumberAxis label="X" side="BOTTOM"/>
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Y" lowerBound="-20.0" side="LEFT" upperBound="20.0"/>
+                    </yAxis>
+                </LineChart>
+            </center>
+            <top>
+                <Pane prefHeight="68.0" prefWidth="900.0" BorderPane.alignment="CENTER">
+                    <children>
+                        <TextArea fx:id="minXTextArea" layoutX="179.0" layoutY="21.0" maxHeight="25.0" prefHeight="25.0"
+                                  prefWidth="117.0" text="-1"/>
+                        <Label layoutX="140.0" layoutY="26.0" text="min X="/>
+                        <Button fx:id="submitButton" layoutX="498.0" layoutY="22.0" mnemonicParsing="false"
+                                onMouseClicked="#update" text="Submit"/>
+                        <Label layoutX="312.0" layoutY="26.0" text="max X="/>
+                        <TextArea fx:id="maxXTextArea" layoutX="353.0" layoutY="22.0" maxHeight="25.0" prefHeight="25.0"
+                                  prefWidth="117.0" text="1"/>
+                        <Label layoutX="613.0" layoutY="26.0" text="Add new value" />
+                        <TextArea layoutX="714.0" layoutY="22.0" maxHeight="25.0" prefHeight="25.0" prefWidth="100.0" fx:id="newValueTextArea"/>
+                        <Button layoutX="833.0" layoutY="22.0" mnemonicParsing="false" text="Add" onMouseClicked="#addNewValue"/>
+                    </children>
+                </Pane>
+            </top>
+        </BorderPane>
+    </children>
+</AnchorPane>
