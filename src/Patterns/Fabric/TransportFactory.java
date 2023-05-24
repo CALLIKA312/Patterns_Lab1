@@ -1,6 +1,7 @@
-package Interfaces;
+package Patterns.Fabric;
 
 import Exeptions.DuplicateModelNameException;
+import Transports.Transport;
 
 import java.io.Serializable;
 

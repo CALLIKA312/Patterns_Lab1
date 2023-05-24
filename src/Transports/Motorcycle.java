@@ -3,7 +3,7 @@ package Transports;
 import Exeptions.DuplicateModelNameException;
 import Exeptions.ModelPriceOutOfBoundsException;
 import Exeptions.NoSuchModelNameException;
-import Interfaces.Transport;
+import Patterns.Visitor.Visitor;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -11,7 +11,7 @@ import java.util.Arrays;
 public class Motorcycle implements Transport, Serializable, Cloneable {
 
 
-    private class Model implements Serializable, Cloneable {
+    public class Model implements Serializable, Cloneable {
         public String modelName;
         public int modelPrice;
         public Model prev;
@@ -96,8 +96,8 @@ public class Motorcycle implements Transport, Serializable, Cloneable {
             return ans;
         }
 
-        if (!Arrays.equals((transport).getModelsOfVehicle(),
-                this.getModelsOfVehicle())) {
+        if (!Arrays.equals((transport).getModelsNamesOfVehicle(),
+                this.getModelsNamesOfVehicle())) {
             return ans;
         }
 
@@ -110,7 +110,7 @@ public class Motorcycle implements Transport, Serializable, Cloneable {
     }
 
     public int hashCode() {
-        return id * getModelsOfVehicle().hashCode() * getPricesOfVehicle().hashCode();
+        return id * getModelsNamesOfVehicle().hashCode() * getPricesOfVehicle().hashCode();
     }
 
     public Object clone() {
@@ -136,24 +136,6 @@ public class Motorcycle implements Transport, Serializable, Cloneable {
         }
     }
 
-    /*public Object clone() {
-        Object obj = new Object();
-
-        try {
-            obj = super.clone();
-
-            FileWriter fileWriter = new FileWriter("tmp_cloneMotorcycle.txt");
-            task.writeVehicleToSymbolFile((myClass.Interfaces.Vehicle) obj, fileWriter);
-
-            FileReader fileReader = new FileReader("tmp_cloneMotorcycle.txt");
-            obj = task.readVehicleFromSymbolFile(fileReader);
-
-        } catch (CloneNotSupportedException | Exeptions.DuplicateModelNameException | IOException exception) {
-            exception.printStackTrace();
-        }
-        return obj;
-    }*/
-
     public String getMark() {
         return mark;
     }
@@ -171,7 +153,7 @@ public class Motorcycle implements Transport, Serializable, Cloneable {
     }
 
 
-    public String[] getModelsOfVehicle() {
+    public String[] getModelsNamesOfVehicle() {
         String[] modelsNames = new String[getModelsCount()];
         Model curModel = head.next;
         for (int i = 0; i < getModelsCount(); i++) {
@@ -271,4 +253,8 @@ public class Motorcycle implements Transport, Serializable, Cloneable {
             throw new ModelPriceOutOfBoundsException("Ожидается положительная цена модель, а не: ", price);
     }
 
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

@@ -1,7 +1,8 @@
-package Interfaces;
+package Transports;
 
 import Exeptions.DuplicateModelNameException;
 import Exeptions.NoSuchModelNameException;
+import Patterns.Visitor.Visitor;
 
 import java.io.Serializable;
 
@@ -17,7 +18,7 @@ public interface Transport extends Serializable {
 
     void changeModelName(String oldName, String newName) throws NoSuchModelNameException, DuplicateModelNameException;
 
-    public String[] getModelsOfVehicle();
+    public String[] getModelsNamesOfVehicle();
 
     int getModelPrice(String modelName) throws NoSuchModelNameException;
 
@@ -31,5 +32,7 @@ public interface Transport extends Serializable {
 
     int getModelsCount();
     int getId();
+
+    void accept(Visitor visitor);
 
 }

@@ -1,7 +1,7 @@
 package Transports;
 
 import Exeptions.*;
-import Interfaces.Transport;
+import Patterns.Visitor.Visitor;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -65,7 +65,7 @@ public class Scooter implements Transport, Serializable, Cloneable {
     }
 
 
-    public String[] getModelsOfVehicle() {
+    public String[] getModelsNamesOfVehicle() {
         String[] modelsNames = new String[getModelsCount()];
         int i = 0;
         for (Map.Entry<String, Integer> entry : modelsOfScooter.entrySet()) {
@@ -124,6 +124,11 @@ public class Scooter implements Transport, Serializable, Cloneable {
 
     public int getId() {
         return id;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+
     }
 
 

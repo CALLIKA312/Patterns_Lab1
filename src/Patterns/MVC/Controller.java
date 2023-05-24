@@ -4,17 +4,12 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.paint.Color;
 
 import java.text.DecimalFormat;
 
@@ -45,6 +40,16 @@ public class Controller {
                         MyTableRow myTableRow = tableView.getSelectionModel().getSelectedItem();
                         tableView.getItems().remove(myTableRow);
                     } else {
+                        try {
+                            double number = Double.parseDouble(t.getNewValue());
+                            System.out.println("Valid number entered: " + number);
+                        } catch (NumberFormatException e) {
+                            tableView.refresh();
+                            showErrorDialog("Invalid Number", "Please enter a valid number.");
+                            return;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         t.getTableView().getItems().get(
                                 t.getTablePosition().getRow()).setxValue(t.getNewValue());
                     }
@@ -57,6 +62,15 @@ public class Controller {
 
 
     }
+
+    private void showErrorDialog(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
 
     public void update() {
         butChartUpdate();

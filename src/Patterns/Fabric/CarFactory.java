@@ -1,10 +1,9 @@
 package Patterns.Fabric;
 
-import Interfaces.TransportFactory;
-import Interfaces.Transport;
+import Transports.Transport;
 import Transports.Car;
 
-public class AutoFactory implements TransportFactory {
+public class CarFactory implements TransportFactory {
 
     @Override
     public Transport createInstance(String mark, int capacity) {

@@ -1,20 +1,24 @@
 package Transports;
 
-import Exeptions.*;
-import Interfaces.Transport;
+import Exeptions.DuplicateModelNameException;
+import Exeptions.ModelPriceOutOfBoundsException;
+import Exeptions.NoSuchModelNameException;
+import Patterns.Comand.iCommand;
+import Patterns.Visitor.Visitor;
 
-import java.io.Serializable;
+import java.io.*;
 import java.util.Arrays;
+import java.util.Iterator;
 
 public class Car implements Transport, Serializable, Cloneable {
 
-    private class Model implements Serializable, Cloneable {
-        public String modelName;
-        public int modelPrice;
+    public static class Model implements Serializable, Cloneable {
+        public String name;
+        public int price;
 
-        public Model(String modelName, int modelPrice) {
-            this.modelName = modelName;
-            this.modelPrice = modelPrice;
+        public Model(String name, int price) {
+            this.name = name;
+            this.price = price;
         }
 
         public Object clone() {
@@ -26,34 +30,36 @@ public class Car implements Transport, Serializable, Cloneable {
                 return null;
             }
         }
+
+        @Override
+        public String toString() {
+            return "Название: " + name + ", Цена: " + price;
+        }
     }
 
     private String mark;
-    private int id = 1;
-    private Model[] modelsOfCar;
+    private final int id = 1;
+    private Model[] models;
     private int modelsCount;
 
     public Car() {
         this.mark = "";
-        this.modelsOfCar = new Model[1];
+        this.models = new Model[1];
         this.modelsCount = 0;
     }
 
     public Car(String mark, int capacity) {
         this.mark = mark;
-        this.modelsOfCar = new Model[capacity];
+        this.models = new Model[capacity];
         for (int i = 0; i < capacity; i++) {
-            modelsOfCar[i] = new Model("" + i, 1);
+            models[i] = new Model("" + i, 1);
         }
         this.modelsCount = capacity;
     }
 
     public String toString() {
-        StringBuffer stringBuffer = new StringBuffer();
-        stringBuffer.append(
-                this.getClass().getName())
-                .append("@").append(Integer.toHexString(hashCode()));
-        return stringBuffer.toString();
+        return this.getClass().getName() +
+                "@" + Integer.toHexString(hashCode());
     }
 
     public boolean equals(Object obj) {
@@ -76,8 +82,8 @@ public class Car implements Transport, Serializable, Cloneable {
             return ans;
         }
 
-        if (!Arrays.equals((transport).getModelsOfVehicle(),
-                this.getModelsOfVehicle())) {
+        if (!Arrays.equals((transport).getModelsNamesOfVehicle(),
+                this.getModelsNamesOfVehicle())) {
             return ans;
         }
 
@@ -90,17 +96,17 @@ public class Car implements Transport, Serializable, Cloneable {
     }
 
     public int hashCode() {
-        return id * mark.hashCode() * getModelsOfVehicle().hashCode();
+        return id * mark.hashCode() * getModelsNamesOfVehicle().hashCode();
     }
 
     public Object clone() {
         Car result = null;
         try {
             result = (Car) super.clone();
-            result.modelsOfCar = new Model[result.modelsCount];
+            result.models = new Model[result.modelsCount];
             for (int i = 0; i < modelsCount; i++) {
-                Model clone = (Model) this.modelsOfCar[i].clone();
-                result.modelsOfCar[i] = clone;
+                Model clone = (Model) this.models[i].clone();
+                result.models[i] = clone;
             }
             return result;
         } catch (CloneNotSupportedException exception) {
@@ -121,46 +127,54 @@ public class Car implements Transport, Serializable, Cloneable {
         int pos = findModelPos(oldName);
         if (oldName.equals(newName)) return;
         checkDuplicate(newName);
-        modelsOfCar[pos].modelName = newName;
+        models[pos].name = newName;
     }
 
-    public String[] getModelsOfVehicle() {
-        String[] modelsNames = new String[modelsOfCar.length];
+    public Model[] getModels() {
+        return models;
+    }
+
+    public void setModels(Model[] models) {
+        this.models = models;
+    }
+
+    public String[] getModelsNamesOfVehicle() {
+        String[] modelsNames = new String[models.length];
         for (int i = 0; i < getModelsCount(); i++)
-            modelsNames[i] = modelsOfCar[i].modelName;
+            modelsNames[i] = models[i].name;
         return modelsNames;
     }
 
     public int getModelPrice(String modelName) throws NoSuchModelNameException {
         int pos = findModelPos(modelName);
-        return modelsOfCar[pos].modelPrice;
+        return models[pos].price;
     }
 
     public void setModelPrice(String modelName, int newPrice) throws NoSuchModelNameException {
         checkPrice(newPrice);
         int pos = findModelPos(modelName);
-        modelsOfCar[pos].modelPrice = newPrice;
+        models[pos].price = newPrice;
     }
 
     public int[] getPricesOfVehicle() {
-        int[] modelsPrices = new int[modelsOfCar.length];
+        int[] modelsPrices = new int[models.length];
         for (int i = 0; i < getModelsCount(); i++)
-            modelsPrices[i] = modelsOfCar[i].modelPrice;
+            modelsPrices[i] = models[i].price;
         return modelsPrices;
     }
 
     public void addModel(String modelName, int modelPrice) throws DuplicateModelNameException {
         checkPrice(modelPrice);
         checkDuplicate(modelName);
-        modelsOfCar = Arrays.copyOf(modelsOfCar, getModelsCount() + 1);
-        modelsOfCar[getModelsCount()] = new Model(modelName, modelPrice);
+        models = Arrays.copyOf(models, getModelsCount() + 1);
+        models[getModelsCount()] = new Model(modelName, modelPrice);
         modelsCount++;
     }
 
     public void removeModel(String modelName) throws NoSuchModelNameException {
         int pos = findModelPos(modelName);
-        System.arraycopy(modelsOfCar, pos + 1, modelsOfCar, pos, getModelsCount() - pos - 1);
-        modelsOfCar = Arrays.copyOf(modelsOfCar, getModelsCount() - 1);
+        System.arraycopy(models, pos + 1, models, pos, getModelsCount() - pos - 1);
+        models = Arrays.copyOf(models, getModelsCount() - 1);
         modelsCount--;
     }
 
@@ -173,9 +187,9 @@ public class Car implements Transport, Serializable, Cloneable {
     }
 
     private int findModelPosOrNegative(String modelName) {
-        if (modelsOfCar[0] == null) return -1;
-        for (int i = 0; i < modelsOfCar.length; i++)
-            if (modelsOfCar[i].modelName.equals(modelName)) return i;
+        if (models.length > 0 && models[0] == null) return -1;
+        for (int i = 0; i < models.length; i++)
+            if (models[i].name.equals(modelName)) return i;
         return -1;
     }
 
@@ -199,5 +213,81 @@ public class Car implements Transport, Serializable, Cloneable {
         if (price <= 0) throw new ModelPriceOutOfBoundsException("Ожидается положительная цена модель, а не: ", price);
     }
 
+    private iCommand command;
 
+    public void print(PrintWriter writer) {
+        if (command != null) command.execute(this, writer);
+    }
+
+    public void setPrintCommand(iCommand command) {
+        this.command = command;
+    }
+
+    public Iterator<Model> iterator() {
+        return new CarIterator();
+    }
+
+    private class CarIterator implements Iterator<Model> {
+        private int currentIndex = 0;
+
+        @Override
+        public boolean hasNext() {
+            return currentIndex < models.length;
+        }
+
+        @Override
+        public Model next() {
+            return models[currentIndex++];
+        }
+    }
+
+
+    public static class Memento {
+        private byte[] serializedState;
+
+        public Memento(Car car) {
+            setCar(car);
+        }
+
+        public void setCar(Car car) {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(baos);
+                oos.writeObject(car);
+                oos.close();
+                serializedState = baos.toByteArray();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public Car getCar() {
+            try {
+                ByteArrayInputStream bais = new ByteArrayInputStream(serializedState);
+                ObjectInputStream ois = new ObjectInputStream(bais);
+                Car car = (Car) ois.readObject();
+                ois.close();
+                return car;
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
+
+
+    public Memento createMemento() {
+        return new Memento(this);
+    }
+
+    public void setMemento(Memento memento) {
+        this.mark = memento.getCar().getMark();
+        this.modelsCount = memento.getCar().getModelsCount();
+        this.models = memento.getCar().getModels();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

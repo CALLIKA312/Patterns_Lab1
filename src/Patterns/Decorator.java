@@ -2,7 +2,8 @@ package Patterns;
 
 import Exeptions.DuplicateModelNameException;
 import Exeptions.NoSuchModelNameException;
-import Interfaces.Transport;
+import Transports.Transport;
+import Patterns.Visitor.Visitor;
 
 public class Decorator implements Transport {
     private final Transport transport;
@@ -37,8 +38,8 @@ public class Decorator implements Transport {
     }
 
     @Override
-    public synchronized String[] getModelsOfVehicle() {
-        return transport.getModelsOfVehicle();
+    public synchronized String[] getModelsNamesOfVehicle() {
+        return transport.getModelsNamesOfVehicle();
     }
 
     @Override
@@ -74,6 +75,11 @@ public class Decorator implements Transport {
     @Override
     public synchronized int getId() {
         return transport.getId();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+
     }
 
 }

@@ -1,12 +1,25 @@
 import Exeptions.DuplicateModelNameException;
 import Exeptions.NoSuchModelNameException;
-import Patterns.DAO.MotorcycleDAO;
-import Transports.Car;
+import Patterns.Comand.ColumnPrint;
+import Patterns.Comand.RowPrint;
+import Patterns.Strategy.CountingStrategy;
+import Patterns.Strategy.LinearCountingStrategy;
+import Patterns.Strategy.StreamCountingStrategy;
+import Patterns.Visitor.PrintVisitor;
+import Patterns.Visitor.Visitor;
+import Patterns.СhainOfResponsibility.ColumnHandler;
+import Patterns.СhainOfResponsibility.RowHandler;
 import Transports.Motorcycle;
+import Transports.Transport;
+import Patterns.DAO.TransportTextDAO;
+import Patterns.Fabric.MotorcycleFabric;
+import Transports.Car;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class Main {
 
@@ -52,12 +65,12 @@ public class Main {
             System.out.println(yamaha.hashCode());
 
             obj = yamaha.clone();
-            StaticTasks.printMarkInfo((Interfaces.Transport) obj);
+            StaticTasks.printMarkInfo((Transports.Transport) obj);
 
-            ((Interfaces.Transport) obj).changeModelName("Fazer", "tmp_Name");
+            ((Transports.Transport) obj).changeModelName("Fazer", "tmp_Name");
             //((Interfaces.Vehicle) obj).removeModel("Niken");
-            ((Interfaces.Transport) obj).removeModel("tmp_Name");
-            StaticTasks.printMarkInfo((Interfaces.Transport) obj);
+            ((Transports.Transport) obj).removeModel("tmp_Name");
+            StaticTasks.printMarkInfo((Transports.Transport) obj);
             StaticTasks.printMarkInfo(yamaha);
 
             if (yamaha.equals(obj)) System.out.println("Their equals by equality");
@@ -105,22 +118,25 @@ public class Main {
         }*/
 
         /*DAO*/
-//        CarDAO carDAO = new CarDAO();
-
+//        TransportTextDAO transportTextDAO = new TransportTextDAO();
+//
 //        List<Car> cars = new ArrayList<>();
 //        Car pezho = new Car("pezho", 5);
-//        Car asd = new Car("asd", 5);
 //        cars.add(pezho);
-//        cars.add(asd);
-//        carDAO.saveAll(cars);
-//        carDAO.save(pezho);
+//        //carDAO.saveAll(cars);
+//        transportTextDAO.save(pezho);
+//
+//        Transport testCar = StaticTasks.createInstance("xar", 5);
+//
+//        testCar = transportTextDAO.get("pezho");
+//        System.out.println(testCar.getClass());
+//        StaticTasks.printMarkInfo(testCar);
+//
+//        StaticTasks.setTransportFactory(new MotorcycleFabric());
 
-//        Car newPezho = carDAO.get("asd");
-//        StaticTasks.printMarkInfo(newPezho);
-
-//        List<Car> cars = carDAO.getAll();
-//        for (Car car : cars) StaticTasks.printMarkInfo(car);
-//        carDAO.delete("asd");
+       // List<Car> cars = carDAO.getAll();
+      //  for (Car car : cars) StaticTasks.printMarkInfo(car);
+       // carDAO.delete("asd");
 
 
 //        MotorcycleDAO motorcycleDAO = new MotorcycleDAO();
@@ -141,6 +157,73 @@ public class Main {
 //        for (Motorcycle motorcycle : motorcycles) StaticTasks.printMarkInfo(motorcycle);
 
 
+        /*Chain of Responsibility*/
+
+//        RowHandler handler1 = new RowHandler();
+//        ColumnHandler handler2 = new ColumnHandler();
+//        handler1.setNextHandler(handler2);
+//
+//        Car pezho = new Car("pezho", 5);
+//        StaticTasks.printMarkInfo(pezho);
+//        handler1.handleRequest(pezho);
+
+        /*Command*/
+//        RowPrint rowPrint = new RowPrint();
+//        ColumnPrint columnPrint = new ColumnPrint();
+//        Car car = new Car("car", 5);
+//        car.setPrintCommand(columnPrint);
+//        try (PrintWriter writer = new PrintWriter(new FileWriter("carOutput.txt"))) {
+//            car.print(writer);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+        /*Iterator*/
+//        Car car = new Car("car", 5);
+//        Iterator<Car.Model> iterator = car.iterator();
+//        while (iterator.hasNext()) System.out.println(iterator.next());
+
+        /*Memento*/
+//        Car car = new Car("car", 5);
+//        Car.Memento memento = car.createMemento();
+//        memento.setCar(car);
+//        car.setMemento(memento);
+//        car.removeModel("2");
+//        car.removeModel("0");
+//        System.out.println("Измененная модель");
+//        StaticTasks.printMarkInfo(car);
+//        car.setMemento(memento);
+//        System.out.println("Изначальная модель");
+//        StaticTasks.printMarkInfo(car);
+
+        /*Strategy*/
+//        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(args[0]));
+//        int[] arr = new int[]{
+//                1, 2, 6, 4, 1, 6,2,3,4,5,1
+//        };
+//        out.writeObject(arr);
+//
+//        String inputFile = args[0];
+//        //CountingStrategy strategy = new LinearCountingStrategy();
+//        CountingStrategy strategy = new StreamCountingStrategy();
+//        ArrayCounter arrayCounter = new ArrayCounter(strategy);
+//        Map<Integer, Integer> occurrences = arrayCounter.countOccurrences(inputFile);
+//        if (occurrences != null) {
+//            for (Map.Entry<Integer, Integer> entry : occurrences.entrySet()) {
+//                System.out.println("Element: " + entry.getKey() + ", Count: " + entry.getValue());
+//            }
+//        }
+
+        /*Template method*/
+//        ShapeAnimationApp.main(args);
+
+        /*Visitor*/
+        Car car = new Car("car",5);
+        Visitor visitor = new PrintVisitor();
+        car.accept(visitor);
+
+        Motorcycle motorcycle = new Motorcycle("moto", 3);
+        motorcycle.accept(visitor);
 
     }
 

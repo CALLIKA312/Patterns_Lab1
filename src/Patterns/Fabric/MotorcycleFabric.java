@@ -1,8 +1,7 @@
 package Patterns.Fabric;
 
 import Exeptions.DuplicateModelNameException;
-import Interfaces.TransportFactory;
-import Interfaces.Transport;
+import Transports.Transport;
 import Transports.Motorcycle;
 
 public class MotorcycleFabric implements TransportFactory {
